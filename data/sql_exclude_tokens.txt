@@ -1,0 +1,14 @@
+count
+sum
+max
+min
+avg
+exists
+between
+having
+union
+intersect
+minus
+join
+in
+distinct
