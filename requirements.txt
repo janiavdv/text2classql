@@ -1,2 +1,4 @@
 nltk
-json
+transformers
+sqlparse
+torch

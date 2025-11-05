@@ -33,6 +33,7 @@ class Where:
         BoolOperator.AND
     )  # logical operator to combine predicates ("AND" or "OR")
 
+# TODO: support nested conditions
 
 @dataclass(frozen=True)
 class OrderBy:
@@ -48,6 +49,7 @@ class Query:
     order_by: Optional[List[OrderBy]] = field(
         default_factory=list
     )  # list of columns to order the results by
+    limit: Optional[int] = None  # limit on number of results
 
 
 def generate_sql(query_object: Query) -> str:
@@ -82,5 +84,9 @@ def generate_sql(query_object: Query) -> str:
             )
         if order_by_clauses:
             query_str += f" ORDER BY {', '.join(order_by_clauses)}"
+    
+    # Build LIMIT clause
+    if query_object.limit:
+        query_str += f" LIMIT {query_object.limit}"
 
-    return query_str
+    return query_str + ";"
