@@ -14,6 +14,7 @@ for db_name in os.listdir(SPIDER_DATA_PATH + "database/"):
 with open(EXCLUDE_TOKENS_PATH, "r") as f:
     SQL_EXCLUDE_TOKENS = set(line.strip() for line in f)
 
+
 def load_data(
     path: str = SPIDER_TRAIN_PATH,
     sql_exclude_tokens: set[str] = SQL_EXCLUDE_TOKENS,
@@ -24,10 +25,14 @@ def load_data(
     with open(path, "r") as f:
         for doc in json.load(f):
             database = doc["db_id"]
-            question = [token.lower() for token in nl_tokenizer.tokenize(doc["question"])]
+            question = [
+                token.lower() for token in nl_tokenizer.tokenize(doc["question"])
+            ]
             query = [token.lower() for token in sql_tokenizer.tokenize(doc["query"])]
             if sql_exclude_tokens:
-                contains_exclude_token = any(token in sql_exclude_tokens for token in query)
+                contains_exclude_token = any(
+                    token in sql_exclude_tokens for token in query
+                )
                 if contains_exclude_token:
                     continue
             data.append((database, question, query))
