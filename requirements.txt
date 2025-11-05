@@ -2,3 +2,4 @@ nltk
 transformers
 sqlparse
 torch
+matplotlib

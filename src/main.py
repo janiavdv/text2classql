@@ -3,6 +3,7 @@ from models.random import RandomSelectClassifier
 from data.sql_dataclass import Query, convert_tokens_to_query
 from data.encode_dbs import encode_nlquestion, encode_input
 from tqdm import tqdm
+import matplotlib.pyplot as plt
 
 
 def get_dataset(print_stats: bool = False):
@@ -30,14 +31,13 @@ def get_dataset(print_stats: bool = False):
     return train, dev, test
 
 
-def run_random_baseline():
+def run_and_plot_random_baseline():
     train, dev, test = get_dataset()
     model = RandomSelectClassifier()
 
     schemas = {}
 
-    accuracy_sum = 0.0
-    num_tests = 0
+    accuracies = []
     # convert test data into the required format for prediction
     for db_id, question_tokens, query_tokens in tqdm(
         test, desc="Evaluating on test set"
@@ -62,11 +62,26 @@ def run_random_baseline():
             [1 for y, y_pred in zip(true_label, predicted_label) if y == y_pred]
         ) / len(true_label)
         # print(f"Accuracy: {accuracy:.2f}")
-        accuracy_sum += accuracy
-        num_tests += 1
+        accuracies.append(accuracy)
 
-    print(f"Average Accuracy: {accuracy_sum / num_tests:.2f}")
+    print(f"Average Accuracy: {sum(accuracies) / len(accuracies):.2f}")
+    # Plotting the accuracies
+    
+    plt.figure(figsize=(10, 6))
+    plt.rcParams['font.family'] = 'Times New Roman'
+    plt.rcParams['font.size'] = 16  # Adjust overall font size
+
+    plt.hist(accuracies, bins=20, color='pink', edgecolor='brown')
+    plt.title('Random Baseline Accuracies on Test Set', fontsize=20, fontweight='bold')
+    plt.xlabel('Accuracy', fontsize=18)
+    plt.ylabel('Frequency', fontsize=18)
+    plt.xticks(fontsize=14)
+    plt.yticks(fontsize=14)
+
+    plt.tight_layout()
+    plt.savefig('plots/random_baseline_accuracies.png')
+    plt.show()
 
 
 if __name__ == "__main__":
-    run_random_baseline()
+    run_and_plot_random_baseline()
